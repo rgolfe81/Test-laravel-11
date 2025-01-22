@@ -3,8 +3,12 @@
 namespace App\Http\Controllers\Dashboard;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Post\PutRequest;
+use App\Http\Requests\Post\StoreRequest;
 use App\Models\Post;
+use App\Models\Category;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 
 class PostController extends Controller
 {
@@ -13,7 +17,8 @@ class PostController extends Controller
      */
     public function index()
     {
-        return 'prueba';
+        $posts = Post::paginate(5);
+        return view('dashboard/post/index', compact('posts'));
     }
 
     /**
@@ -21,15 +26,18 @@ class PostController extends Controller
      */
     public function create()
     {
-        //
+        $post = new Post();
+        $categories = Category::pluck('id', 'title');
+        return view('dashboard.post.create', compact('post', 'categories'));
     }
 
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(StoreRequest $request)
     {
-        //
+        Post::create($request->validated());
+        return to_route('post.index');
     }
 
     /**
@@ -37,7 +45,7 @@ class PostController extends Controller
      */
     public function show(Post $post)
     {
-        //
+        return view('dashboard/post/show', compact('post'));
     }
 
     /**
@@ -45,15 +53,23 @@ class PostController extends Controller
      */
     public function edit(Post $post)
     {
-        //
+        $categories = Category::pluck('id', 'title');
+        return view('dashboard/post/edit', compact('categories','post'));
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Post $post)
+    public function update(PutRequest $request, Post $post)
     {
-        //
+        $data = $request->validated();
+        // IMAGE
+        if(isset($data['image'])){
+            $data['image'] = $filename = time().'.'.$data['image']->extension();
+            $request->image->move(public_path('uploads/posts'),$filename);
+        }
+        $post->update($data);
+        return to_route('post.index');
     }
 
     /**
@@ -61,6 +77,7 @@ class PostController extends Controller
      */
     public function destroy(Post $post)
     {
-        //
+        $post->delete();
+        return to_route('post.index');
     }
 }
