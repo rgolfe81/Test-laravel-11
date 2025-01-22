@@ -10,7 +10,15 @@
     <header>
         <h3>Dashboard</h3>
     </header>
+
+    @if(session('status'))
+        <div>
+            {{ session('status') }}
+        </div>
+    @endif
+        
     @yield('content')
+
     <section>
         @yield('morecontent')
     </section>
