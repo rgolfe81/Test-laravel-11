@@ -1,9 +1,9 @@
 @extends('dashboard.master')
 
 @section('content')
-    <h4>Categorías</h4>
-    <a href="{{ route('category.create') }}" target="blank">Crear</a>
-    <table>
+    <h2>Categorías</h2>
+    <a class="btn btn-primary my-3" href="{{ route('category.create') }}" target="blank">Crear</a>
+    <table class="table">
         <thead>
             <tr>
                 <th>
@@ -27,17 +27,19 @@
                         {{ $category->title }}
                     </td>
                     <td>
-                        <a href="{{ route('category.show',$category) }}">Mostrar</a>
-                        <a href="{{ route('category.edit',$category) }}">Editar</a>
+                        <a class="btn btn-success mt-2" href="{{ route('category.show', $category) }}">Mostrar</a>
+                        <a class="btn btn-warning mt-2" href="{{ route('category.edit', $category) }}">Editar</a>
                         <form action="{{ route('category.destroy', $category) }}" method="post">
                             @method('DELETE')
                             @csrf
-                            <button type="submit">Eliminar</button>
+                            <button class="btn btn-danger mt-2" type="submit">Eliminar</button>
                         </form>
                     </td>
                 </tr>
             @endforeach
         </tbody>
     </table>
-    {{ $categories->links() }}
+    <div id="pagination" class="mt-2">
+        {{ $categories->links() }}
+    </div>
 @endsection
